@@ -9,7 +9,7 @@ public class Details
 {
     @Id // primary key for id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int detailsId;
+    private int id;
 
     @Column(nullable = false, unique=true)
     private String email;
@@ -32,14 +32,14 @@ public class Details
         setBirthday(birthday);
     }
 
-    public int getDetailsId()
+    public int getId()
     {
-        return detailsId;
+        return id;
     }
 
-    public void setDetailsId(int detailsId)
+    public void setId(int id)
     {
-        this.detailsId = detailsId;
+        this.id = id;
     }
 
     public String getEmail()
@@ -78,20 +78,20 @@ public class Details
         if (this == o) return true;
         if (!(o instanceof Details)) return false;
         Details details = (Details) o;
-        return getDetailsId() == details.getDetailsId() && getEmail().equals(details.getEmail()) && getName().equals(details.getName()) && getBirthday().equals(details.getBirthday());
+        return getId() == details.getId() && getEmail().equals(details.getEmail()) && getName().equals(details.getName()) && getBirthday().equals(details.getBirthday());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(getDetailsId(), getEmail(), getName(), getBirthday());
+        return Objects.hash(getId(), getEmail(), getName(), getBirthday());
     }
 
     @Override
     public String toString()
     {
         return "Details{" +
-                "detailsId=" + getDetailsId() +
+                "detailsId=" + getId() +
                 ", email='" + getEmail() + '\'' +
                 ", name='" + getName() + '\'' +
                 ", birthday=" + getBirthday() +

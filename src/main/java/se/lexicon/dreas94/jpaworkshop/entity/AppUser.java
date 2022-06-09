@@ -9,7 +9,7 @@ public class AppUser
 {
     @Id // primary key for id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int appUserId;
+    private int id;
 
     @Column(nullable = false, unique=true)
     private String username;
@@ -21,7 +21,7 @@ public class AppUser
     private LocalDate regDate;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "details_id", referencedColumnName = "detailsId")
+    @JoinColumn(name = "details_id", referencedColumnName = "id")
     private Details details;
 
     public AppUser()
@@ -44,14 +44,14 @@ public class AppUser
         setPassword(password);
     }
 
-    public int getAppUserId()
+    public int getId()
     {
-        return appUserId;
+        return id;
     }
 
-    public void setAppUserId(int appUserId)
+    public void setId(int id)
     {
-        this.appUserId = appUserId;
+        this.id = id;
     }
 
     public String getUsername()
@@ -100,20 +100,20 @@ public class AppUser
         if (this == o) return true;
         if (!(o instanceof AppUser)) return false;
         AppUser appUser = (AppUser) o;
-        return getAppUserId() == appUser.getAppUserId() && getUsername().equals(appUser.getUsername()) && getPassword().equals(appUser.getPassword()) && getRegDate().equals(appUser.getRegDate()) && getDetails().equals(appUser.getDetails());
+        return getId() == appUser.getId() && getUsername().equals(appUser.getUsername()) && getPassword().equals(appUser.getPassword()) && getRegDate().equals(appUser.getRegDate()) && getDetails().equals(appUser.getDetails());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(getAppUserId(), getUsername(), getPassword(), getRegDate(), getDetails());
+        return Objects.hash(getId(), getUsername(), getPassword(), getRegDate(), getDetails());
     }
 
     @Override
     public String toString()
     {
         return "AppUser{" +
-                "appUserId=" + getAppUserId() +
+                "appUserId=" + getId() +
                 ", username='" + getUsername() + '\'' +
                 ", password='" + getPassword() + '\'' +
                 ", regDate=" + getRegDate() +

@@ -46,7 +46,7 @@ public class DetailsDAORepository implements DetailsDAO
     @Transactional
     public void delete(Details details)
     {
-        findById(details.getDetailsId()).orElseThrow(() -> new IllegalArgumentException("Data not found Exception"));
+        findById(details.getId()).orElseThrow(() -> new IllegalArgumentException("Data not found Exception"));
         entityManager.remove(details);
     }
 }

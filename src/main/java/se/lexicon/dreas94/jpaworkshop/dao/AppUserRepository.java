@@ -31,6 +31,7 @@ public class AppUserRepository implements AppUserDAO
     @Transactional
     public AppUser create(AppUser appUser)
     {
+        if(appUser == null) throw new IllegalArgumentException("AppUser is null");
         entityManager.persist(appUser);
         return appUser;
     }
@@ -39,6 +40,7 @@ public class AppUserRepository implements AppUserDAO
     @Transactional
     public AppUser update(AppUser appUser)
     {
+        if(appUser == null) throw new IllegalArgumentException("AppUser is null");
         return entityManager.merge(appUser);
     }
 
@@ -46,7 +48,7 @@ public class AppUserRepository implements AppUserDAO
     @Transactional
     public void delete(AppUser appUser)
     {
-        findById(appUser.getAppUserId()).orElseThrow(() -> new IllegalArgumentException("Data not found Exception"));
+        findById(appUser.getId()).orElseThrow(() -> new IllegalArgumentException("Data not found Exception")); //Make custrom exception handler
         entityManager.remove(appUser);
     }
 }
