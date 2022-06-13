@@ -25,11 +25,11 @@ public class Details
 
     }
 
-    public Details(String email, String name, LocalDate birthday)
+    public Details(String email, String name, String birthday)
     {
         setEmail(email);
         setName(name);
-        setBirthday(birthday);
+        setBirthday(LocalDate.parse(birthday));
     }
 
     public int getId()

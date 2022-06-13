@@ -1,12 +1,15 @@
 package se.lexicon.dreas94.jpaworkshop.dao;
 
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Repository;
 import se.lexicon.dreas94.jpaworkshop.entity.Details;
+import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,10 +24,12 @@ public class DetailsDAORepository implements DetailsDAO
         return Optional.ofNullable(entityManager.find(Details.class, id));
     }
 
+
+    @SuppressWarnings("unchecked")
     @Override
-    public Collection<Details> findAll()
+    public List<Details> findAll()
     {
-        return entityManager.createQuery("select d from Details d").getResultList();
+        return (List<Details>)entityManager.createQuery("select d from Details d").getResultList();
     }
 
     @Override
@@ -44,9 +49,9 @@ public class DetailsDAORepository implements DetailsDAO
 
     @Override
     @Transactional
-    public void delete(Details details)
+    public void delete(Details details) throws DataNotFoundException
     {
-        findById(details.getId()).orElseThrow(() -> new IllegalArgumentException("Data not found Exception"));
-        entityManager.remove(details);
+        findById(details.getId()).orElseThrow(() -> new DataNotFoundException("Not Found", " AppUser"));
+        entityManager.remove(entityManager.contains(details) ? details : entityManager.merge(details));
     }
 }

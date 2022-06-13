@@ -1,12 +1,15 @@
 package se.lexicon.dreas94.jpaworkshop.dao;
 
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Repository;
 import se.lexicon.dreas94.jpaworkshop.entity.AppUser;
+import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,10 +24,12 @@ public class AppUserRepository implements AppUserDAO
         return Optional.ofNullable(entityManager.find(AppUser.class, id));
     }
 
+
+    @SuppressWarnings("unchecked")
     @Override
-    public Collection<AppUser> findAll()
+    public List<AppUser> findAll()
     {
-        return entityManager.createQuery("select a from AppUser a").getResultList();
+        return (List<AppUser>)entityManager.createQuery("select a from AppUser a").getResultList();
     }
 
     @Override
@@ -46,9 +51,9 @@ public class AppUserRepository implements AppUserDAO
 
     @Override
     @Transactional
-    public void delete(AppUser appUser)
+    public void delete(AppUser appUser) throws DataNotFoundException
     {
-        findById(appUser.getId()).orElseThrow(() -> new IllegalArgumentException("Data not found Exception")); //Make custrom exception handler
-        entityManager.remove(appUser);
+        findById(appUser.getId()).orElseThrow(() -> new DataNotFoundException("Not Found", " AppUser"));
+        entityManager.remove(entityManager.contains(appUser) ? appUser : entityManager.merge(appUser));
     }
 }
