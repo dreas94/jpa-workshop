@@ -4,10 +4,10 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import se.lexicon.dreas94.jpaworkshop.entity.AppUser;
+import se.lexicon.dreas94.jpaworkshop.entity.Book;
+import se.lexicon.dreas94.jpaworkshop.entity.BookLoan;
 import se.lexicon.dreas94.jpaworkshop.entity.Details;
 import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,30 +15,60 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest // spring boot test is used to test the unit test in jpa and entity manager
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class AppUserDAOTest
+public class BookLoanDAOTest
 {
-    @Autowired
-    private AppUserDAO testObject;
+    private final BookLoanDAO testObject;
 
-    private AppUser testAppUser;
+    private final AppUserDAO appUserDAOObject;
+
+    private final BookDAO bookDAOObject;
+
+    private BookLoan testBookLoan;
+
+    @Autowired
+    public BookLoanDAOTest(AppUserDAO appUserDAOObject, BookDAO bookDAOObject, BookLoanDAO testObject)
+    {
+        this.appUserDAOObject = appUserDAOObject;
+        this.bookDAOObject = bookDAOObject;
+        this.testObject = testObject;
+    }
 
     @BeforeAll
     public void setUp()
     {
-        testAppUser = testObject.create(new AppUser("dreas94", "ewfw4et2r4",
+        AppUser appUserObject1 = appUserDAOObject.create(new AppUser("dreas94", "ewfw4et2r4",
                 new Details("tras94@gmail.com", "Andreas", "1994-03-14")));
 
-        testObject.create(new AppUser("mer89", "wef2342trg23",
+        AppUser appUserObject2 = appUserDAOObject.create(new AppUser("mer89", "wef2342trg23",
                 new Details("glitter89@gmail.com", "Mehrdad", "1989-02-27")));
+
+        Book bookObject1 = bookDAOObject.create(new Book("123454536", "Tester", 8));
+
+        Book bookObject2 = bookDAOObject.create(new Book("345194856", "Gralemald", 20));
+
+
+        testBookLoan = testObject.create(new BookLoan(false, appUserObject1, bookObject1));
+        testObject.create(new BookLoan(false, appUserObject2, bookObject2));
     }
 
     @Test
     @Order(1)
     void create()
     {
-        AppUser actualData = testObject.create(new AppUser("sdfasd4", "dsasdadfwt23rv",
-                new Details("asdasd4@gmail.com", "Test", "1990-11-22")));
-        AppUser expectedData = testObject.findById(3).orElse(null);
+        BookLoan actualData = null;
+        BookLoan expectedData = null;
+        try
+        {
+            AppUser appTemp = appUserDAOObject.findById(1).orElseThrow(() -> new DataNotFoundException("Not Found", " BookLoan"));
+            Book bookTemp = bookDAOObject.findById(2);
+            actualData = testObject.create(new BookLoan(false, appTemp, bookTemp));
+            expectedData = testObject.findById(3);
+        }
+        catch (DataNotFoundException e)
+        {
+            System.out.println(e.getObjectName());
+            System.out.println(e.getMessage());
+        }
         assertEquals(expectedData, actualData);
     }
 
@@ -49,8 +79,8 @@ public class AppUserDAOTest
     {
         try
         {
-            AppUser expectedData = testAppUser;
-            AppUser actualData = testObject.findById(1).orElseThrow(() -> new DataNotFoundException("Not Found", " AppUser"));
+            BookLoan expectedData = testBookLoan;
+            BookLoan actualData = testObject.findById(1);
             assertEquals(expectedData, actualData);
         }
         catch (DataNotFoundException e)
@@ -78,7 +108,7 @@ public class AppUserDAOTest
     {
         try
         {
-            testObject.delete(testAppUser);
+            testObject.delete(testBookLoan.getId());
         }
         catch (DataNotFoundException e)
         {
@@ -93,16 +123,15 @@ public class AppUserDAOTest
 
     @Test
     @Order(5)
-    void find_gives_OptionalEmpty()
+    void find_throws_DataNotFoundException()
     {
-        assertEquals(Optional.empty(), testObject.findById(10));
+        assertThrows(DataNotFoundException.class, () -> testObject.findById(10));
     }
 
     @Test
     @Order(6)
     void delete_throws_DataNotFoundException()
     {
-        assertThrows(DataNotFoundException.class, () -> testObject.delete(new AppUser("sdfasd4", "dsasdadfwt23rv",
-                new Details("asdasd4@gmail.com", "Test", "1990-11-22"))));
+        assertThrows(DataNotFoundException.class, () -> testObject.delete(10));
     }
 }

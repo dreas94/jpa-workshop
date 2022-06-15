@@ -1,19 +1,18 @@
-package se.lexicon.dreas94.jpaworkshop.dao;
+package se.lexicon.dreas94.jpaworkshop.dao.repo;
 
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Repository;
+import se.lexicon.dreas94.jpaworkshop.dao.AppUserDAO;
 import se.lexicon.dreas94.jpaworkshop.entity.AppUser;
 import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class AppUserRepository implements AppUserDAO
+public class AppUserDAORepository implements AppUserDAO
 {
     @PersistenceContext
     private EntityManager entityManager;
@@ -29,14 +28,14 @@ public class AppUserRepository implements AppUserDAO
     @Override
     public List<AppUser> findAll()
     {
-        return (List<AppUser>)entityManager.createQuery("select a from AppUser a").getResultList();
+        return (List<AppUser>) entityManager.createQuery("select au from AppUser au").getResultList();
     }
 
     @Override
     @Transactional
     public AppUser create(AppUser appUser)
     {
-        if(appUser == null) throw new IllegalArgumentException("AppUser is null");
+        if (appUser == null) throw new IllegalArgumentException("AppUser is null");
         entityManager.persist(appUser);
         return appUser;
     }
@@ -45,7 +44,7 @@ public class AppUserRepository implements AppUserDAO
     @Transactional
     public AppUser update(AppUser appUser)
     {
-        if(appUser == null) throw new IllegalArgumentException("AppUser is null");
+        if (appUser == null) throw new IllegalArgumentException("AppUser is null");
         return entityManager.merge(appUser);
     }
 

@@ -3,10 +3,8 @@ package se.lexicon.dreas94.jpaworkshop.dao;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import se.lexicon.dreas94.jpaworkshop.entity.Details;
+import se.lexicon.dreas94.jpaworkshop.entity.Book;
 import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,39 +12,48 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest // spring boot test is used to test the unit test in jpa and entity manager
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class DetailsDAOTest
+public class BookDAOTest
 {
     @Autowired
-    private DetailsDAO testObject;
+    private BookDAO testObject;
 
-    private Details testDetails;
+    private Book testBook;
 
     @BeforeAll
     public void setUp()
     {
-        testDetails = testObject.create(new Details("tras94@gmail.com", "Andreas", "1994-03-14"));
+        testBook = testObject.create(new Book("123454536", "Tester", 8));
 
-        testObject.create(new Details("glitter89@gmail.com", "Mehrdad", "1989-02-27"));
+        testObject.create(new Book("345194856", "Gralemald", 20));
     }
 
     @Test
     @Order(1)
     void create()
     {
-        Details actualData = testObject.create(new Details("asdasd4@gmail.com", "Test", "1990-11-22"));
-        Details expectedData = testObject.findById(3).orElse(null);
+        Book actualData = testObject.create(new Book("123425624", "Tester123", 45));
+        Book expectedData = null;
+        try
+        {
+            expectedData = testObject.findById(3);
+        }
+        catch (DataNotFoundException e)
+        {
+            System.out.println(e.getObjectName());
+            System.out.println(e.getMessage());
+        }
         assertEquals(expectedData, actualData);
     }
 
     @Test
     @Order(2)
-    @DisplayName("test find id 1 with the result and testDetails being equal")
+    @DisplayName("test find id 1 with the result and testAppUser being equal")
     public void findId1()
     {
         try
         {
-            Details expectedData = testDetails;
-            Details actualData = testObject.findById(1).orElseThrow(() -> new DataNotFoundException("Not Found", " Details"));
+            Book expectedData = testBook;
+            Book actualData = testObject.findById(1);
             assertEquals(expectedData, actualData);
         }
         catch (DataNotFoundException e)
@@ -58,7 +65,7 @@ public class DetailsDAOTest
 
     @Test
     @Order(3)
-    @DisplayName("test get all method from DetailsDAO with result 3")
+    @DisplayName("test get all method from AppUserDAO with result 3")
     public void findAll()
     {
         int actualSize = testObject.findAll().size();
@@ -69,12 +76,12 @@ public class DetailsDAOTest
 
     @Test
     @Order(4)
-    @DisplayName("test get delete method from AppUser, then get all method from DetailsDAO with result 2")
+    @DisplayName("test get delete method from AppUser, then get all method from AppUserDAO with result 2")
     public void delete()
     {
         try
         {
-            testObject.delete(testDetails);
+            testObject.delete(testBook.getId());
         }
         catch (DataNotFoundException e)
         {
@@ -89,15 +96,15 @@ public class DetailsDAOTest
 
     @Test
     @Order(5)
-    void find_gives_OptionalEmpty()
+    void find_throws_DataNotFoundException()
     {
-        assertEquals(Optional.empty(), testObject.findById(10));
+        assertThrows(DataNotFoundException.class, () -> testObject.findById(10));
     }
 
     @Test
     @Order(6)
     void delete_throws_DataNotFoundException()
     {
-        assertThrows(DataNotFoundException.class, () -> testObject.delete(new Details("asdasd4@gmail.com", "Test", "1990-11-22")));
+        assertThrows(DataNotFoundException.class, () -> testObject.delete(10));
     }
 }

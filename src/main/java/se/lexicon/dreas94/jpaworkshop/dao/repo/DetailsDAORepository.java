@@ -1,14 +1,13 @@
-package se.lexicon.dreas94.jpaworkshop.dao;
+package se.lexicon.dreas94.jpaworkshop.dao.repo;
 
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Repository;
+import se.lexicon.dreas94.jpaworkshop.dao.DetailsDAO;
 import se.lexicon.dreas94.jpaworkshop.entity.Details;
 import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +28,7 @@ public class DetailsDAORepository implements DetailsDAO
     @Override
     public List<Details> findAll()
     {
-        return (List<Details>)entityManager.createQuery("select d from Details d").getResultList();
+        return (List<Details>) entityManager.createQuery("select d from Details d").getResultList();
     }
 
     @Override
