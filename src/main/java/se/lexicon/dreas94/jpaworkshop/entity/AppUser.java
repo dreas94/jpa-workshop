@@ -29,19 +29,17 @@ public class AppUser
         setRegDate(LocalDate.now());
     }
 
-    public AppUser(String username, String password, Details details)
-    {
-        this();
-        setUsername(username);
-        setPassword(password);
-        setDetails(details);
-    }
-
     public AppUser(String username, String password)
     {
         this();
         setUsername(username);
         setPassword(password);
+    }
+
+    public AppUser(String username, String password, Details details)
+    {
+        this(username, password);
+        setDetails(details);
     }
 
     public int getId()

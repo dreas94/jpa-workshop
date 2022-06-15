@@ -20,8 +20,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest // spring boot test is used to test the unit test in jpa and entity manager
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // it configures the test database
-@DirtiesContext // this tells the Spring to clear the application context after the test has sun
 public class AppUserDAOTest
 {
     @Autowired
