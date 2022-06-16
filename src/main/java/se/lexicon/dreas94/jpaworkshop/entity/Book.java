@@ -1,20 +1,29 @@
 package se.lexicon.dreas94.jpaworkshop.entity;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Book
 {
-    @Column(nullable = false)
-    String isbn;
-    @Column(nullable = false)
-    String title;
-    @Column(nullable = false)
-    int maxLoanDays;
     @Id // primary key for id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(nullable = false)
+    private String isbn;
+    @Column(nullable = false)
+    private String title;
+    @Column(nullable = false)
+    private int maxLoanDays;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "Book_Author"
+            ,joinColumns = {@JoinColumn(name = "book_id", referencedColumnName = "id")}
+            ,inverseJoinColumns = {@JoinColumn(name = "author_id", referencedColumnName = "id")})
+    private Set<Author> authors = new HashSet<>();
 
     public Book()
     {
@@ -22,6 +31,7 @@ public class Book
 
     public Book(String isbn, String title, int maxLoanDays)
     {
+        this();
         this.isbn = isbn;
         this.title = title;
         this.maxLoanDays = maxLoanDays;
@@ -65,6 +75,17 @@ public class Book
     public void setMaxLoanDays(int maxLoanDays)
     {
         this.maxLoanDays = maxLoanDays;
+    }
+
+    @Transactional
+    public Set<Author> getAuthors()
+    {
+        return authors;
+    }
+
+    public void setAuthors(Set<Author> authors)
+    {
+        this.authors = authors;
     }
 
     @Override

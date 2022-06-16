@@ -3,14 +3,13 @@ package se.lexicon.dreas94.jpaworkshop.dao;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import se.lexicon.dreas94.jpaworkshop.entity.AppUser;
+import org.springframework.transaction.annotation.Transactional;
+import se.lexicon.dreas94.jpaworkshop.entity.Author;
 import se.lexicon.dreas94.jpaworkshop.entity.Book;
-import se.lexicon.dreas94.jpaworkshop.entity.BookLoan;
-import se.lexicon.dreas94.jpaworkshop.entity.Details;
 import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
 
-import javax.transaction.Transactional;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,53 +17,41 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest // spring boot test is used to test the unit test in jpa and entity manager
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BookLoanDAOTest
+public class AuthorDAOTest
 {
-    private final BookLoanDAO testObject;
-
-    private final AppUserDAO appUserDAOObject;
-
-    private final BookDAO bookDAOObject;
-
-    private BookLoan testBookLoan;
-
     @Autowired
-    public BookLoanDAOTest(AppUserDAO appUserDAOObject, BookDAO bookDAOObject, BookLoanDAO testObject)
-    {
-        this.appUserDAOObject = appUserDAOObject;
-        this.bookDAOObject = bookDAOObject;
-        this.testObject = testObject;
-    }
+    private AuthorDAO testObject;
+
+    private Author testAuthor;
 
     @BeforeAll
     public void setUp()
     {
-        AppUser appUserObject1 = appUserDAOObject.create(new AppUser("dreas94", "ewfw4et2r4",
-                new Details("tras94@gmail.com", "Andreas", "1994-03-14")));
 
-        AppUser appUserObject2 = appUserDAOObject.create(new AppUser("mer89", "wef2342trg23",
-                new Details("glitter89@gmail.com", "Mehrdad", "1989-02-27")));
+        testAuthor = testObject.create(new Author("Andreas", "Eriksson"));
 
-        Book bookObject1 = bookDAOObject.create(new Book("123454536", "Tester", 8));
+        testAuthor.addBook(new Book("123454536", "Tester", 8));
 
-        Book bookObject2 = bookDAOObject.create(new Book("345194856", "Gralemald", 20));
+        Author testAuthor1 = testObject.create(new Author("Lilja", "Teufel"));
 
+        testAuthor1.addBook(new Book("345194856", "Gralemald", 20));
 
-        testBookLoan = testObject.create(new BookLoan(false, appUserObject1, bookObject1));
-        testObject.create(new BookLoan(false, appUserObject2, bookObject2));
+        testAuthor = testObject.update(testAuthor);
+        testObject.update(testAuthor1);
     }
 
     @Test
     @Order(1)
     void create()
     {
-        BookLoan actualData = null;
-        BookLoan expectedData = null;
+        Author actualData = testObject.create(new Author("123425624", "Tester123"));
+        actualData.addBook(new Book("123425624", "Tester123", 45));
+        Author finalActualData = actualData;
+        testAuthor.getWrittenBooks().forEach(finalActualData::addBook);
+        actualData = testObject.update(actualData);
+        Author expectedData = null;
         try
         {
-            AppUser appTemp = appUserDAOObject.findById(1).orElseThrow(() -> new DataNotFoundException("Not Found", " BookLoan"));
-            Book bookTemp = bookDAOObject.findById(2);
-            actualData = testObject.create(new BookLoan(false, appTemp, bookTemp));
             expectedData = testObject.findById(3);
         }
         catch (DataNotFoundException e)
@@ -82,8 +69,8 @@ public class BookLoanDAOTest
     {
         try
         {
-            BookLoan expectedData = testBookLoan;
-            BookLoan actualData = testObject.findById(1);
+            Author expectedData = testAuthor;
+            Author actualData = testObject.findById(1);
             assertEquals(expectedData, actualData);
         }
         catch (DataNotFoundException e)
@@ -111,7 +98,7 @@ public class BookLoanDAOTest
     {
         try
         {
-            testObject.delete(testBookLoan.getId());
+            testObject.delete(testAuthor.getId());
         }
         catch (DataNotFoundException e)
         {

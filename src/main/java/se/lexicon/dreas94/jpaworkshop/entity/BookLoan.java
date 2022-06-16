@@ -8,19 +8,19 @@ import java.util.Objects;
 public class BookLoan
 {
     @Column(nullable = false)
-    LocalDate loanDate;
+    private LocalDate loanDate;
     @Column(nullable = false)
-    LocalDate dueDate;
+    private LocalDate dueDate;
     @Column(nullable = false)
-    boolean returned;
+    private boolean returned;
     @Id // primary key for id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "borrower_id", referencedColumnName = "id")
     private AppUser borrower;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
