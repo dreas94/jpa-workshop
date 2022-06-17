@@ -3,13 +3,11 @@ package se.lexicon.dreas94.jpaworkshop.dao;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import se.lexicon.dreas94.jpaworkshop.entity.Author;
 import se.lexicon.dreas94.jpaworkshop.entity.Book;
 import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
 
-import java.util.HashSet;
-import java.util.Set;
+import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

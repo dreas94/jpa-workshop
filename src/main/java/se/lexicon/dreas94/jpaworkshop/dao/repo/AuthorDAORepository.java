@@ -34,19 +34,19 @@ public class AuthorDAORepository implements AuthorDAO
 
     @Override
     @Transactional
-    public Author create(Author appUser)
+    public Author create(Author author)
     {
-        if (appUser == null) throw new IllegalArgumentException("Author is null");
-        entityManager.persist(appUser);
-        return appUser;
+        if (author == null) throw new IllegalArgumentException("Author is null");
+        entityManager.persist(author);
+        return author;
     }
 
     @Override
     @Transactional
-    public Author update(Author appUser)
+    public Author update(Author author)
     {
-        if (appUser == null) throw new IllegalArgumentException("Author is null");
-        return entityManager.merge(appUser);
+        if (author == null) throw new IllegalArgumentException("Author is null");
+        return entityManager.merge(author);
     }
 
     @Override

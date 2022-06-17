@@ -20,7 +20,7 @@ public class Book
     private int maxLoanDays;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "Book_Author"
+    @JoinTable(name = "book_author"
             ,joinColumns = {@JoinColumn(name = "book_id", referencedColumnName = "id")}
             ,inverseJoinColumns = {@JoinColumn(name = "author_id", referencedColumnName = "id")})
     private Set<Author> authors = new HashSet<>();
@@ -77,7 +77,6 @@ public class Book
         this.maxLoanDays = maxLoanDays;
     }
 
-    @Transactional
     public Set<Author> getAuthors()
     {
         return authors;
@@ -94,13 +93,13 @@ public class Book
         if (this == o) return true;
         if (!(o instanceof Book)) return false;
         Book book = (Book) o;
-        return getId() == book.getId() && getMaxLoanDays() == book.getMaxLoanDays() && getIsbn().equals(book.getIsbn()) && getTitle().equals(book.getTitle());
+        return getId() == book.getId() && getMaxLoanDays() == book.getMaxLoanDays() && getIsbn().equals(book.getIsbn()) && getTitle().equals(book.getTitle()) && getAuthors().equals(book.getAuthors());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(getId(), getIsbn(), getTitle(), getMaxLoanDays());
+        return Objects.hash(getId(), getIsbn(), getTitle(), getMaxLoanDays(), getAuthors());
     }
 
     @Override

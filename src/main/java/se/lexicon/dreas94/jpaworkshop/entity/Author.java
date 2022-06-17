@@ -15,7 +15,10 @@ public class Author
     private String firstName;
     @Column(nullable = false)
     private String lastName;
-    @ManyToMany(mappedBy = "authors", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "book_author"
+            ,joinColumns = {@JoinColumn(name = "author_id", referencedColumnName = "id")}
+            ,inverseJoinColumns = {@JoinColumn(name = "book_id", referencedColumnName = "id")})
     private Set<Book> writtenBooks = new HashSet<>();
 
     public Author()
@@ -79,19 +82,17 @@ public class Author
 
     public void addBook(Book book)
     {
-        writtenBooks.add(book);
-        book.getAuthors().add(this);
+        if(!writtenBooks.contains(book)) writtenBooks.add(book);
     }
 
     public void removeBook(Book book)
     {
-        book.getAuthors().remove(this);
-        writtenBooks.remove(book);
+        if(writtenBooks.contains(book)) writtenBooks.remove(book);
     }
 
     public void remove()
     {
-        for(Book book : new HashSet<>(writtenBooks)) removeBook(book);
+        for (Book book : new HashSet<>(writtenBooks)) removeBook(book);
     }
 
     @Override
@@ -116,7 +117,6 @@ public class Author
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", writtenBooks=" + writtenBooks.toString() +
                 '}';
     }
 }

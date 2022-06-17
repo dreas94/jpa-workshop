@@ -12,9 +12,9 @@ public interface AuthorDAO
 
     Collection<Author> findAll();
 
-    Author create(Author appUser);
+    Author create(Author author);
 
-    Author update(Author appUser);
+    Author update(Author author);
 
     void delete(int id) throws DataNotFoundException;
 }
