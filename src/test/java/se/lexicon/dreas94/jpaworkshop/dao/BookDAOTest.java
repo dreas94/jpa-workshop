@@ -3,6 +3,7 @@ package se.lexicon.dreas94.jpaworkshop.dao;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import se.lexicon.dreas94.jpaworkshop.entity.Book;
 import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
 
@@ -29,6 +30,7 @@ public class BookDAOTest
 
     @Test
     @Order(1)
+    @Transactional
     void create()
     {
         Book actualData = testObject.create(new Book("123425624", "Tester123", 45));
@@ -48,6 +50,7 @@ public class BookDAOTest
     @Test
     @Order(2)
     @DisplayName("test find id 1 with the result and testAppUser being equal")
+    @Transactional
     public void findId1()
     {
         try
@@ -65,18 +68,18 @@ public class BookDAOTest
 
     @Test
     @Order(3)
-    @DisplayName("test get all method from AppUserDAO with result 3")
+    @DisplayName("test get all method from AppUserDAO with result 2")
     public void findAll()
     {
         int actualSize = testObject.findAll().size();
-        int expectedSize = 3;
+        int expectedSize = 2;
 
         assertEquals(expectedSize, actualSize);
     }
 
     @Test
     @Order(4)
-    @DisplayName("test get delete method from AppUser, then get all method from AppUserDAO with result 2")
+    @DisplayName("test get delete method from AppUser, then get all method from AppUserDAO with result 1")
     public void delete()
     {
         try
@@ -89,7 +92,7 @@ public class BookDAOTest
         }
 
         int actualSize = testObject.findAll().size();
-        int expectedSize = 2;
+        int expectedSize = 1;
 
         assertEquals(expectedSize, actualSize);
     }

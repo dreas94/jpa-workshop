@@ -3,6 +3,7 @@ package se.lexicon.dreas94.jpaworkshop.entity;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
@@ -87,23 +88,41 @@ public class Book
         this.authors = authors;
     }
 
+    public boolean equalsForAuthor(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof Book)) return false;
+        Book book = (Book) o;
+        return getId() == book.getId() && getMaxLoanDays() == book.getMaxLoanDays() && getIsbn().equals(book.getIsbn()) && getTitle().equals(book.getTitle());
+    }
+
     @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
         if (!(o instanceof Book)) return false;
         Book book = (Book) o;
-        return getId() == book.getId() && getMaxLoanDays() == book.getMaxLoanDays() && getIsbn().equals(book.getIsbn()) && getTitle().equals(book.getTitle()) && getAuthors().equals(book.getAuthors());
+
+        boolean isEquals = getId() == book.getId() && getMaxLoanDays() == book.getMaxLoanDays() && getIsbn().equals(book.getIsbn()) && getTitle().equals(book.getTitle());
+
+        Iterator<Author> it = getAuthors().iterator();
+        Iterator<Author> il = book.getAuthors().iterator();
+
+        isEquals = isEquals && getAuthors().size() == book.getAuthors().size();
+
+        while(isEquals && it.hasNext() && il.hasNext())
+            isEquals = it.next().equalsForAuthor(il.next());
+
+        return isEquals;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(getId(), getIsbn(), getTitle(), getMaxLoanDays(), getAuthors());
+        return Objects.hash(getId(), getIsbn(), getTitle(), getMaxLoanDays());
     }
 
-    @Override
-    public String toString()
+    public String toStringForAuthor()
     {
         return "Book{" +
                 "id=" + getId() +
@@ -111,5 +130,32 @@ public class Book
                 ", title='" + getTitle() + '\'' +
                 ", maxLoanDays=" + getMaxLoanDays() +
                 '}';
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder("Book{" +
+                "id=" + getId() +
+                ", isbn='" + getIsbn() + '\'' +
+                ", title='" + getTitle() + '\'' +
+                ", maxLoanDays=" + getMaxLoanDays() +
+                '}');
+
+        int count = 0;
+        for(Author author : authors)
+        {
+            count++;
+            if(count < authors.size())
+            {
+                str.append(author.toStringForBook()).append('\'').append(", ");
+            }
+            else
+            {
+                str.append(author.toStringForBook()).append('}');
+            }
+        }
+
+        return str.toString();
     }
 }

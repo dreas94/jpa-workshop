@@ -3,6 +3,7 @@ package se.lexicon.dreas94.jpaworkshop.entity;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 @Entity
@@ -95,28 +96,71 @@ public class Author
         for (Book book : new HashSet<>(writtenBooks)) removeBook(book);
     }
 
+    public boolean equalsForAuthor(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof Author)) return false;
+        Author author = (Author) o;
+        return getId() == author.getId() && getFirstName().equals(author.getFirstName()) && getLastName().equals(author.getLastName());
+    }
+
     @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
         if (!(o instanceof Author)) return false;
         Author author = (Author) o;
-        return getId() == author.getId() && getFirstName().equals(author.getFirstName()) && getLastName().equals(author.getLastName()) && getWrittenBooks().equals(author.getWrittenBooks());
+        boolean isEquals = getId() == author.getId() && getFirstName().equals(author.getFirstName()) && getLastName().equals(author.getLastName());
+
+        Iterator<Book> it = getWrittenBooks().iterator();
+        Iterator<Book> il = author.getWrittenBooks().iterator();
+
+        isEquals = isEquals && getWrittenBooks().size() == author.getWrittenBooks().size();
+
+        while(isEquals && it.hasNext() && il.hasNext())
+            isEquals = it.next().equalsForAuthor(il.next());
+
+        return isEquals;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(getId(), getFirstName(), getLastName(), getWrittenBooks());
+        return Objects.hash(getId(), getFirstName(), getLastName());
     }
 
-    @Override
-    public String toString()
+    public String toStringForBook()
     {
         return "Author{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder("Author{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", writtenBooks=");
+
+        int count = 0;
+        for(Book book : writtenBooks)
+        {
+            count++;
+            if(count < writtenBooks.size())
+            {
+                str.append(book.toStringForAuthor()).append('\'').append(", ");
+            }
+            else
+            {
+                str.append(book.toStringForAuthor()).append('}');
+            }
+        }
+
+        return str.toString();
     }
 }

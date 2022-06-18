@@ -4,14 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import se.lexicon.dreas94.jpaworkshop.dao.AppUserDAO;
-import se.lexicon.dreas94.jpaworkshop.dao.BookDAO;
-import se.lexicon.dreas94.jpaworkshop.dao.BookLoanDAO;
-import se.lexicon.dreas94.jpaworkshop.dao.DetailsDAO;
-import se.lexicon.dreas94.jpaworkshop.entity.AppUser;
-import se.lexicon.dreas94.jpaworkshop.entity.Book;
-import se.lexicon.dreas94.jpaworkshop.entity.BookLoan;
-import se.lexicon.dreas94.jpaworkshop.entity.Details;
+import se.lexicon.dreas94.jpaworkshop.dao.*;
+import se.lexicon.dreas94.jpaworkshop.entity.*;
 
 @Component
 public class CommandLineRunnerExample implements CommandLineRunner
@@ -20,14 +14,17 @@ public class CommandLineRunnerExample implements CommandLineRunner
     AppUserDAO appUserDAO;
     DetailsDAO detailsDAO;
     BookDAO bookDAO;
+
+    AuthorDAO authorDAO;
     BookLoanDAO bookLoanDAO;
 
     @Autowired
-    public CommandLineRunnerExample(AppUserDAO appUserDAO, DetailsDAO detailsDAO, BookDAO bookDAO, BookLoanDAO bookLoanDAO)
+    public CommandLineRunnerExample(AppUserDAO appUserDAO, DetailsDAO detailsDAO, BookDAO bookDAO, AuthorDAO authorDAO, BookLoanDAO bookLoanDAO)
     {
         this.appUserDAO = appUserDAO;
         this.detailsDAO = detailsDAO;
         this.bookDAO = bookDAO;
+        this.authorDAO = authorDAO;
         this.bookLoanDAO = bookLoanDAO;
     }
 
@@ -60,6 +57,17 @@ public class CommandLineRunnerExample implements CommandLineRunner
         bookLoanDAO.create(new BookLoan(false,appUser1,book2));
         bookLoanDAO.create(new BookLoan(false,appUser2,book1));
         bookLoanDAO.create(new BookLoan(false,appUser2,book2));
+
+        Author testAuthor1 = authorDAO.create(new Author("Andreas", "Eriksson"));
+
+        testAuthor1.addBook(book1);
+
+        Author testAuthor2 = authorDAO.create(new Author("Lilja", "Teufel"));
+
+        testAuthor2.addBook(book2);
+
+        testAuthor1 = authorDAO.update(testAuthor1);
+        testAuthor2 = authorDAO.update(testAuthor1);
     }
 
 }

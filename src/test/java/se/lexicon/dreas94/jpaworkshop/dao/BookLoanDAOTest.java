@@ -4,13 +4,12 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
 import se.lexicon.dreas94.jpaworkshop.entity.AppUser;
 import se.lexicon.dreas94.jpaworkshop.entity.Book;
 import se.lexicon.dreas94.jpaworkshop.entity.BookLoan;
 import se.lexicon.dreas94.jpaworkshop.entity.Details;
 import se.lexicon.dreas94.jpaworkshop.exception.DataNotFoundException;
-
-import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -56,6 +55,7 @@ public class BookLoanDAOTest
 
     @Test
     @Order(1)
+    @Transactional
     void create()
     {
         BookLoan actualData = null;
@@ -78,6 +78,7 @@ public class BookLoanDAOTest
     @Test
     @Order(2)
     @DisplayName("test find id 1 with the result and testAppUser being equal")
+    @Transactional
     public void findId1()
     {
         try
@@ -95,18 +96,18 @@ public class BookLoanDAOTest
 
     @Test
     @Order(3)
-    @DisplayName("test get all method from AppUserDAO with result 3")
+    @DisplayName("test get all method from AppUserDAO with result 2")
     public void findAll()
     {
         int actualSize = testObject.findAll().size();
-        int expectedSize = 3;
+        int expectedSize = 2;
 
         assertEquals(expectedSize, actualSize);
     }
 
     @Test
     @Order(4)
-    @DisplayName("test get delete method from AppUser, then get all method from AppUserDAO with result 2")
+    @DisplayName("test get delete method from AppUser, then get all method from AppUserDAO with result 1")
     public void delete()
     {
         try
@@ -119,7 +120,7 @@ public class BookLoanDAOTest
         }
 
         int actualSize = testObject.findAll().size();
-        int expectedSize = 2;
+        int expectedSize = 1;
 
         assertEquals(expectedSize, actualSize);
     }
