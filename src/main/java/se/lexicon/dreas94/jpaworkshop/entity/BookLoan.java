@@ -16,7 +16,7 @@ public class BookLoan
     @Id // primary key for id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "borrower_id", referencedColumnName = "id")
     private AppUser borrower;
 
@@ -29,10 +29,9 @@ public class BookLoan
         setLoanDate(LocalDate.now());
     }
 
-    public BookLoan(boolean returned, AppUser borrower, Book book)
+    public BookLoan(boolean returned, Book book)
     {
         this();
-        setBorrower(borrower);
         setBook(book);
         this.createDueDate();
         setReturned(returned);

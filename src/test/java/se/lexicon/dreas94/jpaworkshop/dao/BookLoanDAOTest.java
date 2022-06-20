@@ -38,19 +38,34 @@ public class BookLoanDAOTest
     @BeforeAll
     public void setUp()
     {
-        AppUser appUserObject1 = appUserDAOObject.create(new AppUser("dreas94", "ewfw4et2r4",
-                new Details("tras94@gmail.com", "Andreas", "1994-03-14")));
+        AppUser appUserObject1 = new AppUser("dreas94", "ewfw4et2r4",
+                new Details("tras94@gmail.com", "Andreas", "1994-03-14"));
 
-        AppUser appUserObject2 = appUserDAOObject.create(new AppUser("mer89", "wef2342trg23",
-                new Details("glitter89@gmail.com", "Mehrdad", "1989-02-27")));
+        AppUser appUserObject2 = new AppUser("mer89", "wef2342trg23",
+                new Details("glitter89@gmail.com", "Mehrdad", "1989-02-27"));
+
+        appUserDAOObject.create(appUserObject1);
+        appUserDAOObject.create(appUserObject2);
 
         Book bookObject1 = bookDAOObject.create(new Book("123454536", "Tester", 8));
 
         Book bookObject2 = bookDAOObject.create(new Book("345194856", "Gralemald", 20));
 
+        testBookLoan = new BookLoan(false, bookObject1);
+        BookLoan bookLoan2 = new BookLoan(false, bookObject2);
 
-        testBookLoan = testObject.create(new BookLoan(false, appUserObject1, bookObject1));
-        testObject.create(new BookLoan(false, appUserObject2, bookObject2));
+        testObject.create(testBookLoan);
+        testObject.create(bookLoan2);
+
+        appUserObject1.createBookLoan(testBookLoan);
+        appUserObject2.createBookLoan(bookLoan2);
+
+        appUserDAOObject.update(appUserObject1);
+        appUserDAOObject.update(appUserObject2);
+
+        testBookLoan = testObject.update(testBookLoan);
+        testObject.update(bookLoan2);
+
     }
 
     @Test
@@ -64,7 +79,9 @@ public class BookLoanDAOTest
         {
             AppUser appTemp = appUserDAOObject.findById(1).orElseThrow(() -> new DataNotFoundException("Not Found", " BookLoan"));
             Book bookTemp = bookDAOObject.findById(2);
-            actualData = testObject.create(new BookLoan(false, appTemp, bookTemp));
+            actualData = new BookLoan(false, bookTemp);
+            appTemp.createBookLoan(actualData);
+            testObject.create(actualData);
             expectedData = testObject.findById(3);
         }
         catch (DataNotFoundException e)

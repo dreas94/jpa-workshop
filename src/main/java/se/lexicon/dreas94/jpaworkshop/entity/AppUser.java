@@ -2,6 +2,8 @@ package se.lexicon.dreas94.jpaworkshop.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +25,9 @@ public class AppUser
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "details_id", referencedColumnName = "id")
     private Details details;
+
+    @OneToMany(mappedBy = "borrower")
+    private List<BookLoan> loans;
 
     public AppUser()
     {
@@ -91,6 +96,38 @@ public class AppUser
     {
         this.details = details;
     }
+
+    public List<BookLoan> getLoans()
+    {
+        if (loans == null) loans = new ArrayList<>();
+        return loans;
+    }
+
+    public void setLoans(List<BookLoan> loans)
+    {
+        this.loans = loans;
+    }
+
+    // convenience methods for manipulating with list
+    public void createBookLoan(BookLoan bookLoan)
+    {
+        if (bookLoan == null) throw new IllegalArgumentException("book data is null");
+        if (loans == null) loans = new ArrayList<>();
+
+        loans.add(bookLoan);
+        bookLoan.setBorrower(this);
+
+    }
+
+    public void removeBookLoan(BookLoan bookLoan)
+    {
+        if (bookLoan == null) throw new IllegalArgumentException("book data is null");
+        if (loans == null) loans = new ArrayList<>();
+
+        bookLoan.setBorrower(null);
+        loans.remove(bookLoan);
+    }
+
 
     @Override
     public boolean equals(Object o)
